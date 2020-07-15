@@ -4,7 +4,8 @@ import Navigation from './components/nav/Navigation';
 import Logo from './components/logo/Logo';
 import ImageLinkForm from './components/imagelinkform/ImageLinkForm.js';
 import FaceRecognition from './components/face-recognition/FaceRecognition.js';
-import SignIn from './components/signin/SignIn'
+import SignIn from './components/signin/SignIn';
+import Register from './components/register/Register';
 import 'tachyons';
 import Rank from './components/rank/Rank';
 import Particles from "react-tsparticles";
@@ -100,25 +101,26 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
-      route: 'signin'
+      route: 'signin',
+      isSignedIn: false
     }
   }
   onInputChange = (event) => {
     this.setState({input: event.target.value});
   }
-caclulateFaceLocation = (data) => {
-  const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-  const image = document.getElementById('inputimage');
-  const width = Number(image.width);
-  const height = Number(image.height);
-  console.log(height);
-  return {
-    leftCol: clarifaiFace.left_col * width,
-    topRow: clarifaiFace.top_row * height,
-    rightCol: width - (clarifaiFace.right_col * width),
-    bottomRow: height - (clarifaiFace.bottom_row * height)
+  caclulateFaceLocation = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    console.log(height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
   }
-}
 
 displayFaceBox = (box) => {
   console.log(box)
@@ -135,32 +137,42 @@ onButtonSubmit = () => {
     .catch(err => console.error(err));
 }
 
-onRouteChange = () => {
-  this.setState({route: 'home'});
+onRouteChange = (route) => {
+  if (route === 'signout') {
+    this.setState({isSignedIn: false})
+  } else if (route === 'home') {
+    this.setState({isSignedIn: true})
+  }
+  this.setState({route: route});
 }
 
   render() {
+    const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
         <Particles className='particles'
           id="tsparticles"
           options={particlesOptions}
         />
-      
-        <Navigation onRouteChange={this.onRouteChange}/>
-        { this.state.route === 'signin' 
-          ? <SignIn onRouteChange={this.onRouteChange} />
-          : <div>
+        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+        { route === 'home' 
+          ? <div>
               <Logo />
               <Rank />
               <ImageLinkForm 
                 onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}
               />
-              <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box}/>
+              <FaceRecognition imageUrl={imageUrl} box={box}/>
             </div>
-          }
+          : (
+            route === 'signin'
+            ? <SignIn onRouteChange={this.onRouteChange} />
+            : <Register onRouteChange={this.onRouteChange} 
+              />
+            )
+        }
       </div>
-    );
+          );
   }
 }
 export default App;
