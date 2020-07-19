@@ -25,7 +25,7 @@ class Register extends React.Component {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         email: this.state.email,
-        password: this.state.signInPassword,
+        password: this.state.password,
         name: this.state.name
       })
     })
@@ -37,6 +37,8 @@ class Register extends React.Component {
         }
       })
   }
+
+ 
 
   render() {
     const { onRouteChange } = this.props;

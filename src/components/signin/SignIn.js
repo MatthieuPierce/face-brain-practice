@@ -6,6 +6,7 @@ class SignIn extends React.Component {
     this.state = {
       signInEmail: '',
       signInPassword: '',
+      signInFailed: false
     }
   }
 
@@ -29,6 +30,8 @@ class SignIn extends React.Component {
         if (user.id) {
           this.props.loadUser(user);
           this.props.onRouteChange('home');
+        } else {
+          this.setState({signInFailed: true});
         }
       })
   }
@@ -71,8 +74,11 @@ class SignIn extends React.Component {
             </div>
             <div className="lh-copy mt3">
               <p onClick={this.onSubmitSignIn} 
-              className="f6 link white dim black db">Register</p>
+              className="f6 link white dim db">Register</p>
             </div>
+            { this.state.signInFailed ? 
+              <div className="red b">Sign in failed</div>
+            : <React.Fragment></React.Fragment>}
           </div>
          </main>
       </article>

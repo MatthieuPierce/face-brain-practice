@@ -26,11 +26,11 @@ const particlesOptions = {
     detectsOn: "canvas",
     events: {
       onClick: {
-        enable: true,
+        enable: false,
         mode: "push",
       },
       onHover: {
-        enable: true,
+        enable: false,
         mode: "repulse",
       },
       resize: true,
@@ -126,6 +126,7 @@ class App extends Component {
   onInputChange = (event) => {
     this.setState({input: event.target.value});
   }
+
   caclulateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById('inputimage');
