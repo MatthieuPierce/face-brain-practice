@@ -9,11 +9,6 @@ import Register from './components/register/Register';
 import 'tachyons';
 import Rank from './components/rank/Rank';
 import Particles from "react-tsparticles";
-import Clarifai from 'clarifai';
-
-const app = new Clarifai.App({
-  apiKey: '3ef20ec22f8a488cb9739634bf657fa4'
-});
 
 const particlesOptions = {
   background: {
@@ -151,12 +146,17 @@ displayFaceBox = (box) => {
 
 onButtonSubmit = () => {
   this.setState({imageUrl: this.state.input});
-  app.models
-    .predict(
-      Clarifai.FACE_DETECT_MODEL, this.state.input)
+  fetch('https://obscure-spire-27702.herokuapp.com/imageurl', {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      input: this.state.input
+    })
+  })
+    .then(response => response.json())
     .then(response => {
       if (response) {
-        fetch('http://localhost:3002/image', {
+        fetch('https://obscure-spire-27702.herokuapp.com/image', {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
